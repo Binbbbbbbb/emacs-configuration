@@ -31,3 +31,33 @@
 (set-default-coding-systems 'utf-8)
 (prefer-coding-system 'utf-8)
 (setq default-buffer-file-coding-system 'utf-8-unix)
+
+;; =========================
+;; Python + Pyright + Eglot
+;; =========================
+(require 'eglot)
+;; 自动启用 pyright
+(add-to-list 'eglot-server-programs
+             '(python-mode . ("pyright-langserver" "--stdio")))
+(add-hook 'python-mode-hook 'eglot-ensure)
+
+;; =========================
+;; 安装corfu
+(use-package corfu
+  :ensure t
+  :init
+  (global-corfu-mode))
+
+;; =========================
+;; TAB补全  
+(setq tab-always-indent 'complete)
+
+(defun my/tab-indent-or-complete ()
+  (interactive)
+  (if (or (looking-at "\\_>")
+          (company-manual-begin)
+          (completion-at-point))
+      (completion-at-point)
+    (indent-for-tab-command)))
+
+(global-set-key (kbd "TAB") 'my/tab-indent-or-complete)
